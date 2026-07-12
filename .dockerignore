@@ -1,0 +1,14 @@
+# Не тащим в образ локальные артефакты — сборка идёт с нуля внутри контейнера.
+bin/
+obj/
+*.db
+*.db-shm
+*.db-wal
+.git/
+.gitignore
+.vs/
+.vscode/
+.idea/
+Dockerfile
+README.md
+**/*.user
