@@ -4,7 +4,20 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // БД: SQLite (файл app.db). Путь можно переопределить через DB_PATH.
+// Если в пути есть папка (напр. /data/app.db на постоянном диске) — создаём её.
+// Если создать нельзя (диск не подключён/нет прав) — откатываемся на локальный app.db,
+// чтобы деплой не падал с "unable to open database file".
 var dbPath = Environment.GetEnvironmentVariable("DB_PATH") ?? "app.db";
+try
+{
+    var dbDir = Path.GetDirectoryName(Path.GetFullPath(dbPath));
+    if (!string.IsNullOrEmpty(dbDir))
+        Directory.CreateDirectory(dbDir);
+}
+catch
+{
+    dbPath = "app.db";
+}
 builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite($"Data Source={dbPath}"));
 
 builder.Services.AddControllers();
