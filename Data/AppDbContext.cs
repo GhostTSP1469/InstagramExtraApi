@@ -8,6 +8,8 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Location> Locations => Set<Location>();
+    public DbSet<Call> Calls => Set<Call>();
+    public DbSet<Reaction> Reactions => Set<Reaction>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
