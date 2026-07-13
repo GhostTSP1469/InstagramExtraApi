@@ -10,6 +10,7 @@ public class AppDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Call> Calls => Set<Call>();
     public DbSet<Reaction> Reactions => Set<Reaction>();
+    public DbSet<Repost> Reposts => Set<Repost>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
