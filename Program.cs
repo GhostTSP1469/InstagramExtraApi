@@ -22,7 +22,16 @@ builder.Services.AddDbContext<AppDbContext>(o => o.UseSqlite($"Data Source={dbPa
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // Разные контроллеры объявляют вложенные типы с одинаковым коротким именем
+    // (напр. ReactDto в ReactionController и в MessageReactionController). По
+    // умолчанию Swashbuckle строит schemaId из короткого имени типа → коллизия
+    // "An item with the same key has already been added. Key: ReactDto" и
+    // Swagger падает с "Failed to load API definition". Берём полное имя с
+    // объявляющим классом, чтобы имена схем были уникальны.
+    c.CustomSchemaIds(t => t.FullName!.Replace("+", "."));
+});
 
 // HttpClient для прокси к Giphy (GIF в чате).
 builder.Services.AddHttpClient();
