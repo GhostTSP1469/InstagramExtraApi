@@ -20,6 +20,21 @@ public class ChatExtraController : ControllerBase
 
     public record SendDto(int ChatId, string SenderId, string SenderName, string Type, string? Text, string? MediaUrl, string? FileName);
 
+    /// <summary>
+    /// Тело для отправки файла. Все form-поля (в т.ч. IFormFile) собраны в один
+    /// класс: иначе Swashbuckle падает с "[FromForm] attribute used with IFormFile".
+    /// </summary>
+    public class SendFileForm
+    {
+        public int ChatId { get; set; }
+        public string SenderId { get; set; } = string.Empty;
+        public string SenderName { get; set; } = string.Empty;
+        public string Type { get; set; } = string.Empty;
+        public IFormFile File { get; set; } = default!;
+        public int? DurationSec { get; set; }
+        public string? Text { get; set; }
+    }
+
     /// <summary>Отправить текст/gif/стикер (без файла, JSON).</summary>
     [HttpPost("send")]
     public async Task<IActionResult> Send([FromBody] SendDto dto)
@@ -41,10 +56,10 @@ public class ChatExtraController : ControllerBase
 
     /// <summary>Отправить файл (image/video/file/voice) — multipart.</summary>
     [HttpPost("send-file")]
-    public async Task<IActionResult> SendFile(
-        [FromForm] int chatId, [FromForm] string senderId, [FromForm] string senderName,
-        [FromForm] string type, [FromForm] IFormFile file, [FromForm] int? durationSec, [FromForm] string? text)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> SendFile([FromForm] SendFileForm form)
     {
+        var file = form.File;
         if (file is null || file.Length == 0) return Ok(ApiResponse<ExtraMessage>.Fail("file is required", 400));
 
         var uploads = Path.Combine(_env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot"), "uploads");
@@ -55,14 +70,14 @@ public class ChatExtraController : ControllerBase
 
         var msg = new ExtraMessage
         {
-            ChatId = chatId,
-            SenderId = senderId,
-            SenderName = senderName,
-            Type = Normalize(type),
-            Text = text,
+            ChatId = form.ChatId,
+            SenderId = form.SenderId,
+            SenderName = form.SenderName,
+            Type = Normalize(form.Type),
+            Text = form.Text,
             MediaUrl = $"/uploads/{name}",
             FileName = file.FileName,
-            DurationSec = durationSec,
+            DurationSec = form.DurationSec,
         };
         _db.ExtraMessages.Add(msg);
         await _db.SaveChangesAsync();

@@ -17,12 +17,25 @@ public class StoryExtraController : ControllerBase
 
     public record StoryGroupDto(string UserId, string UserName, string? UserImage, List<ExtraStory> Stories);
 
+    /// <summary>
+    /// Тело для добавления сторис. Все form-поля (в т.ч. IFormFile) собраны в один
+    /// класс: иначе Swashbuckle падает с "[FromForm] attribute used with IFormFile".
+    /// </summary>
+    public class AddStoryForm
+    {
+        public string UserId { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
+        public string? UserImage { get; set; }
+        public string? Caption { get; set; }
+        public IFormFile File { get; set; } = default!;
+    }
+
     /// <summary>Добавить сторис (multipart: image/video).</summary>
     [HttpPost("add")]
-    public async Task<IActionResult> Add(
-        [FromForm] string userId, [FromForm] string userName, [FromForm] string? userImage,
-        [FromForm] string? caption, [FromForm] IFormFile file)
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> Add([FromForm] AddStoryForm form)
     {
+        var file = form.File;
         if (file is null || file.Length == 0) return Ok(ApiResponse<ExtraStory>.Fail("file is required", 400));
         var uploads = Path.Combine(_env.WebRootPath ?? Path.Combine(_env.ContentRootPath, "wwwroot"), "uploads");
         Directory.CreateDirectory(uploads);
@@ -34,10 +47,10 @@ public class StoryExtraController : ControllerBase
                       Path.GetExtension(file.FileName).ToLower() is ".mp4" or ".webm" or ".mov";
         var story = new ExtraStory
         {
-            UserId = userId,
-            UserName = userName,
-            UserImage = userImage,
-            Caption = caption,
+            UserId = form.UserId,
+            UserName = form.UserName,
+            UserImage = form.UserImage,
+            Caption = form.Caption,
             MediaUrl = $"/uploads/{name}",
             Type = isVideo ? "video" : "image",
         };
