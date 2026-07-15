@@ -10,6 +10,13 @@ public class AppDbContext : DbContext
     public DbSet<Location> Locations => Set<Location>();
     public DbSet<Call> Calls => Set<Call>();
     public DbSet<Reaction> Reactions => Set<Reaction>();
+    public DbSet<NotInterested> NotInterested => Set<NotInterested>();
+    public DbSet<Sticker> Stickers => Set<Sticker>();
+    public DbSet<ExtraMessage> ExtraMessages => Set<ExtraMessage>();
+    public DbSet<MessageReaction> MessageReactions => Set<MessageReaction>();
+    public DbSet<CallSignal> CallSignals => Set<CallSignal>();
+    public DbSet<ExtraStory> ExtraStories => Set<ExtraStory>();
+    public DbSet<StoryEvent> StoryEvents => Set<StoryEvent>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -19,5 +26,12 @@ public class AppDbContext : DbContext
             new Location { LocationId = 2, City = "New York", State = "New York", ZipCode = "10001", Country = "USA" },
             new Location { LocationId = 3, City = "Moscow", State = "Moscow", ZipCode = "101000", Country = "Russia" }
         );
+
+        // Базовый набор стикеров (emoji-стикеры).
+        var emojis = new[] { "😍", "🔥", "😂", "😎", "🥰", "😭", "👍", "🙏", "🎉", "💯", "👏", "❤️", "😮", "😢", "🤝", "👀" };
+        var stickers = new List<Sticker>();
+        for (var i = 0; i < emojis.Length; i++)
+            stickers.Add(new Sticker { Id = i + 1, Pack = "classic", Name = emojis[i], Url = emojis[i] });
+        modelBuilder.Entity<Sticker>().HasData(stickers);
     }
 }

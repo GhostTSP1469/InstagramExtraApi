@@ -24,6 +24,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// HttpClient для прокси к Giphy (GIF в чате).
+builder.Services.AddHttpClient();
+
+// Папка загрузок создаётся ДО билда хоста, чтобы WebRootPath (wwwroot) существовал
+// и UseStaticFiles/сохранение файлов работали.
+Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads"));
+
 // CORS — фронт (Next) должен свободно ходить сюда.
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
     p.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
@@ -41,6 +48,9 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
 }
+
+// Раздача загруженных файлов (голосовые/видео/файлы чата, сторис) из /uploads.
+app.UseStaticFiles();
 
 // Swagger доступен всегда (в т.ч. на проде) — так удобнее тестировать после деплоя.
 app.UseSwagger();
