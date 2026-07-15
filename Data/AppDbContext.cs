@@ -17,6 +17,7 @@ public class AppDbContext : DbContext
     public DbSet<CallSignal> CallSignals => Set<CallSignal>();
     public DbSet<ExtraStory> ExtraStories => Set<ExtraStory>();
     public DbSet<StoryEvent> StoryEvents => Set<StoryEvent>();
+    public DbSet<Repost> Reposts => Set<Repost>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
