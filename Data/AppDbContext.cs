@@ -18,6 +18,9 @@ public class AppDbContext : DbContext
     public DbSet<ExtraStory> ExtraStories => Set<ExtraStory>();
     public DbSet<StoryEvent> StoryEvents => Set<StoryEvent>();
     public DbSet<Repost> Reposts => Set<Repost>();
+    public DbSet<StoryReaction> StoryReactions => Set<StoryReaction>();
+    public DbSet<StoryReply> StoryReplies => Set<StoryReply>();
+    public DbSet<StorySeen> StorySeen => Set<StorySeen>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
