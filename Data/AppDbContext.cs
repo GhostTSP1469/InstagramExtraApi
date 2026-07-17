@@ -24,6 +24,8 @@ public class AppDbContext : DbContext
     public DbSet<AccountLink> AccountLinks => Set<AccountLink>();
     public DbSet<Block> Blocks => Set<Block>();
     public DbSet<Report> Reports => Set<Report>();
+    public DbSet<Highlight> Highlights => Set<Highlight>();
+    public DbSet<HighlightItem> HighlightItems => Set<HighlightItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
