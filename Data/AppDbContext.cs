@@ -31,6 +31,8 @@ public class AppDbContext : DbContext
     public DbSet<CommentReply> CommentReplies => Set<CommentReply>();
     public DbSet<Privacy> Privacies => Set<Privacy>();
     public DbSet<FollowRequest> FollowRequests => Set<FollowRequest>();
+    public DbSet<Presence> Presences => Set<Presence>();
+    public DbSet<TimeCapsule> TimeCapsules => Set<TimeCapsule>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

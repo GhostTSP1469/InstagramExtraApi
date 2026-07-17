@@ -82,3 +82,21 @@ public class StoryEvent
     public string Kind { get; set; } = "view"; // view|like
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
+
+/// <summary>Присутствие: когда пользователь последний раз пинговал (для «в сети»).</summary>
+public class Presence
+{
+    public int Id { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public DateTime LastSeenAt { get; set; } = DateTime.UtcNow;
+}
+
+/// <summary>«Капсула времени»: пост скрыт до даты RevealAt.</summary>
+public class TimeCapsule
+{
+    public int Id { get; set; }
+    public int PostId { get; set; }
+    public string UserId { get; set; } = string.Empty; // владелец поста (кто поставил)
+    public DateTime RevealAt { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}
