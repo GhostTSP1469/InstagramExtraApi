@@ -18,7 +18,9 @@ public class PresenceController : ControllerBase
     private readonly AppDbContext _db;
     public PresenceController(AppDbContext db) => _db = db;
 
-    private static readonly TimeSpan OnlineWindow = TimeSpan.FromSeconds(60);
+    // 120s: browsers throttle heartbeat timers in background tabs (~1/min), so a
+    // tighter window would flip an active-but-backgrounded user to "offline".
+    private static readonly TimeSpan OnlineWindow = TimeSpan.FromSeconds(120);
 
     public record PresenceDto(string UserId, bool Online, DateTime LastSeenAt);
 
