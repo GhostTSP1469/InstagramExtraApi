@@ -22,6 +22,8 @@ public class AppDbContext : DbContext
     public DbSet<StoryReply> StoryReplies => Set<StoryReply>();
     public DbSet<StorySeen> StorySeen => Set<StorySeen>();
     public DbSet<AccountLink> AccountLinks => Set<AccountLink>();
+    public DbSet<Block> Blocks => Set<Block>();
+    public DbSet<Report> Reports => Set<Report>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
