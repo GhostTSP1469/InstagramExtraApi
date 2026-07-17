@@ -29,6 +29,8 @@ public class AppDbContext : DbContext
     public DbSet<Collection> Collections => Set<Collection>();
     public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
     public DbSet<CommentReply> CommentReplies => Set<CommentReply>();
+    public DbSet<Privacy> Privacies => Set<Privacy>();
+    public DbSet<FollowRequest> FollowRequests => Set<FollowRequest>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
