@@ -1,5 +1,6 @@
 using InstagramExtraApi.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,9 +37,11 @@ builder.Services.AddSwaggerGen(c =>
 // HttpClient для прокси к Giphy (GIF в чате).
 builder.Services.AddHttpClient();
 
-// Папка загрузок создаётся ДО билда хоста, чтобы WebRootPath (wwwroot) существовал
-// и UseStaticFiles/сохранение файлов работали.
-Directory.CreateDirectory(Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads"));
+// Папка загрузок (совпадает с тем, куда пишут контроллеры: <root>/wwwroot/uploads).
+// Для персистентности на Render примонтируй Disk на этот путь контейнера
+// (иначе на free-тарифе файлы эфемерны и пропадают при редеплое/простое).
+var uploadsDir = Path.Combine(builder.Environment.ContentRootPath, "wwwroot", "uploads");
+Directory.CreateDirectory(uploadsDir);
 
 // CORS — фронт (Next) должен свободно ходить сюда.
 builder.Services.AddCors(o => o.AddDefaultPolicy(p =>
@@ -58,8 +61,15 @@ using (var scope = app.Services.CreateScope())
     db.Database.EnsureCreated();
 }
 
-// Раздача загруженных файлов (голосовые/видео/файлы чата, сторис) из /uploads.
-app.UseStaticFiles();
+// Раздача загруженных файлов из /uploads. Явный FileProvider + RequestPath,
+// а не дефолтный wwwroot: на Render WebRootPath не совпадал → /uploads/* давал 404.
+// ServeUnknownFileTypes — чтобы отдавались голосовые .webm и прочие без известного MIME.
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsDir),
+    RequestPath = "/uploads",
+    ServeUnknownFileTypes = true,
+});
 
 // Swagger доступен всегда (в т.ч. на проде) — так удобнее тестировать после деплоя.
 app.UseSwagger();
