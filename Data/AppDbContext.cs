@@ -26,6 +26,8 @@ public class AppDbContext : DbContext
     public DbSet<Report> Reports => Set<Report>();
     public DbSet<Highlight> Highlights => Set<Highlight>();
     public DbSet<HighlightItem> HighlightItems => Set<HighlightItem>();
+    public DbSet<Collection> Collections => Set<Collection>();
+    public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
