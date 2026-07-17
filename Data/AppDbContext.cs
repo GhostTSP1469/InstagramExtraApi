@@ -28,6 +28,7 @@ public class AppDbContext : DbContext
     public DbSet<HighlightItem> HighlightItems => Set<HighlightItem>();
     public DbSet<Collection> Collections => Set<Collection>();
     public DbSet<CollectionItem> CollectionItems => Set<CollectionItem>();
+    public DbSet<CommentReply> CommentReplies => Set<CommentReply>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
