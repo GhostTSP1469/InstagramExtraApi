@@ -100,3 +100,15 @@ public class TimeCapsule
     public DateTime RevealAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
+
+/// <summary>Закреплённая музыка в профиле (30-сек превью-трек из iTunes).</summary>
+public class ProfileMusic
+{
+    public int Id { get; set; }
+    public string UserId { get; set; } = string.Empty;
+    public string TrackName { get; set; } = string.Empty;
+    public string ArtistName { get; set; } = string.Empty;
+    public string PreviewUrl { get; set; } = string.Empty; // 30-сек аудио
+    public string ArtworkUrl { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+}

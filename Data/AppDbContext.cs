@@ -33,6 +33,7 @@ public class AppDbContext : DbContext
     public DbSet<FollowRequest> FollowRequests => Set<FollowRequest>();
     public DbSet<Presence> Presences => Set<Presence>();
     public DbSet<TimeCapsule> TimeCapsules => Set<TimeCapsule>();
+    public DbSet<ProfileMusic> ProfileMusics => Set<ProfileMusic>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
