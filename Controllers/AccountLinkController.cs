@@ -18,7 +18,7 @@ public class AccountLinkController : ControllerBase
     private readonly AppDbContext _db;
     public AccountLinkController(AppDbContext db) => _db = db;
 
-    public record LinkRequest(string UserId, string? Provider, string ProviderAccountId, string Email, string? Name, string? Picture);
+    public record LinkRequest(string UserId, string? UserName, string? Provider, string ProviderAccountId, string Email, string? Name, string? Picture);
     public record RebindEmailRequest(string UserId, string? Provider, string Email);
 
     private static string Norm(string? provider) => string.IsNullOrWhiteSpace(provider) ? "google" : provider.ToLower();
@@ -44,6 +44,7 @@ public class AccountLinkController : ControllerBase
         link.ProviderAccountId = dto.ProviderAccountId;
         link.Email = dto.Email;
         link.Name = dto.Name;
+        if (!string.IsNullOrWhiteSpace(dto.UserName)) link.UserName = dto.UserName;
         link.Picture = dto.Picture;
         link.UpdatedAt = DateTime.UtcNow;
         await _db.SaveChangesAsync();
@@ -64,6 +65,17 @@ public class AccountLinkController : ControllerBase
     {
         var p = Norm(provider);
         var link = await _db.AccountLinks.FirstOrDefaultAsync(a => a.Provider == p && a.ProviderAccountId == providerAccountId);
+        return Ok(ApiResponse<AccountLink?>.Ok(link));
+    }
+
+    /// <summary>Привязка по email — чтобы вход через Google находил аккаунт на ЛЮБОМ
+    /// устройстве (не завися от локального хранилища браузера).</summary>
+    [HttpGet("by-email")]
+    public async Task<IActionResult> ByEmail([FromQuery] string email, [FromQuery] string? provider)
+    {
+        var p = Norm(provider);
+        var e = (email ?? "").Trim().ToLower();
+        var link = await _db.AccountLinks.FirstOrDefaultAsync(a => a.Provider == p && a.Email.ToLower() == e);
         return Ok(ApiResponse<AccountLink?>.Ok(link));
     }
 
